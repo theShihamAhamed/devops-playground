@@ -1,13 +1,12 @@
-version: '3.8'
-
 services:
   # Node.js application for production
   app:
+    image: devops-playground-api:latest
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: acquisitions-app-prod
+    container_name: devops-playground-api-prod
     ports:
       - '${PORT:-3000}:3000'
     env_file:
@@ -37,8 +36,8 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - acquisitions-prod
+      - devops-playground-api-prod
 
 networks:
-  acquisitions-prod:
+  devops-playground-api-prod:
     driver: bridge

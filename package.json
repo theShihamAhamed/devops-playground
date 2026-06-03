@@ -1,5 +1,5 @@
 {
-  "name": "acquisitions",
+  "name": "devops-playground-api",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -24,6 +24,9 @@
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:generate:dev": "dotenv -e .env.development -- drizzle-kit generate",
+    "db:migrate:dev": "dotenv -e .env.development -- drizzle-kit migrate",
+    "db:migrate:prod": "dotenv -e .env.production -- drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "dev:docker": "sh ./scripts/dev.sh",
     "prod:docker": "sh ./scripts/prod.sh",
@@ -31,15 +34,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/theShihamAhamed/acquisitions.git"
+    "url": "git+https://github.com/theShihamAhamed/devops-playground.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/theShihamAhamed/acquisitions/issues"
+    "url": "https://github.com/theShihamAhamed/devops-playground/issues"
   },
-  "homepage": "https://github.com/theShihamAhamed/acquisitions#readme",
+  "homepage": "https://github.com/theShihamAhamed/devops-playground#readme",
   "dependencies": {
     "@arcjet/inspect": "^1.0.0-beta.16",
     "@arcjet/node": "^1.0.0-beta.16",
@@ -59,6 +62,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "cross-env": "^10.1.0",
+    "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
