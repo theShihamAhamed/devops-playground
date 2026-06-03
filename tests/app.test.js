@@ -18,7 +18,7 @@ describe('API Endpoints', () => {
 
       expect(response.body).toHaveProperty(
         'message',
-        'devops-playground API is running!'
+        'DevOps Playground API is running!'
       );
     });
   });

@@ -4,3 +4,7 @@ node_modules
 .neon_local/
 public/readme/module-icon.webp
 public/readme/module-thumbnail.webp
+
+coverage
+logs
+*.log
