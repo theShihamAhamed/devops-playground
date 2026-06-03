@@ -13,7 +13,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/kubernetes-demo-api
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/devops-playground-api
 
 jobs:
   build-and-push:
@@ -54,8 +54,8 @@ jobs:
             # Custom suffix if provided
             type=raw,value={{branch}}${{ inputs.tag_suffix && format('-{0}', inputs.tag_suffix) || '' }},enable=${{ inputs.tag_suffix != '' }}
           labels: |
-            org.opencontainers.image.title=Acquisitions API
-            org.opencontainers.image.description=Node.js Express API for acquisitions system
+            org.opencontainers.image.title=DevOps Playground API
+            org.opencontainers.image.description=Node.js Express API for DevOps Playground
             org.opencontainers.image.vendor=Adrian Hajdin
             org.opencontainers.image.created={{date 'YYYY-MM-DDTHH:mm:ssZ'}}
 

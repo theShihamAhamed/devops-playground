@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for Node.js acquisitions application
+# Multi-stage Dockerfile for DevOps Playground API
 
 # Base image with Node.js
 FROM node:18-alpine AS base

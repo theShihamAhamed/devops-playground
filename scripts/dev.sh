@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Development startup script for Acquisition App with Neon Local
+# Development startup script for devops-playground App with Neon Local
 # This script starts the application in development mode with Neon Local
 
-echo "🚀 Starting Acquisition App in Development Mode"
+echo "🚀 Starting DevOps Playground API in Development Mode"
 echo "================================================"
 
 # Check if .env.development exists
@@ -34,16 +34,16 @@ echo "   - Neon Local proxy will create an ephemeral database branch"
 echo "   - Application will run with hot reload enabled"
 echo ""
 
-# Run migrations with Drizzle
-echo "📜 Applying latest schema with Drizzle..."
-npm run db:migrate
+# Start development environment
+# Use detached mode so migrations can run after the database and proxy are available
+docker compose -f docker-compose.dev.yml up --build -d
 
-# Wait for the database to be ready
 echo "⏳ Waiting for the database to be ready..."
 docker compose exec neon-local psql -U neon -d neondb -c 'SELECT 1'
 
-# Start development environment
-docker compose -f docker-compose.dev.yml up --build
+# Run migrations with Drizzle
+echo "📜 Applying latest schema with Drizzle..."
+npm run db:migrate:dev
 
 echo ""
 echo "🎉 Development environment started!"

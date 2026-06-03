@@ -7,7 +7,7 @@ const logger = winston.createLogger({
     winston.format.errors({ stack: true }),
     winston.format.json())
   ),
-  defaultMeta: { service: 'acquisition-api' },
+  defaultMeta: { service: 'devops-playground-api' },
   transports: [
     new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
 
