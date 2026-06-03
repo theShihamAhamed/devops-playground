@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1767894078585" clover="3.2.0">
-  <project timestamp="1767894078585" name="All files">
+<coverage generated="1780509669130" clover="3.2.0">
+  <project timestamp="1780509669130" name="All files">
     <metrics statements="697" coveredstatements="283" conditionals="21" coveredconditionals="6" methods="22" coveredmethods="3" elements="740" coveredelements="292" complexity="0" loc="697" ncloc="697" packages="9" files="16" classes="16"/>
     <package name="src">
       <metrics statements="49" coveredstatements="47" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
@@ -546,7 +546,7 @@
     </package>
     <package name="src.routes">
       <metrics statements="39" coveredstatements="39" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="auht.routes.js" path="C:\Users\Shiham Ahamed\Desktop\devLab\DevOps\acquisitions\src\routes\auht.routes.js">
+      <file name="auth.routes.js" path="C:\Users\Shiham Ahamed\Desktop\devLab\DevOps\acquisitions\src\routes\auth.routes.js">
         <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>

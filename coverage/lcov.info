@@ -623,7 +623,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\routes\auht.routes.js
+SF:src\routes\auth.routes.js
 FNF:0
 FNH:0
 DA:1,1
