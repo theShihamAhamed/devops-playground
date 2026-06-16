@@ -1,30 +1,38 @@
 import aj from '#config/arcjet.js';
 import logger from '#config/logger.js';
+import { jwttoken } from '#utils/jwt.js';
 import { slidingWindow } from '@arcjet/node';
+
+const getRequestRole = req => {
+  if (req.user?.role) {
+    return req.user.role;
+  }
+
+  const token = req.cookies?.token;
+  if (!token) {
+    return 'guest';
+  }
+
+  try {
+    const decoded = jwttoken.verify(token);
+    req.user = decoded;
+    return decoded.role || 'user';
+  } catch {
+    return 'guest';
+  }
+};
 
 const securityMiddleware = async (req, res, next) => {
   const MODE = process.env.NODE_ENV === 'production' ? 'LIVE' : 'DRY_RUN';
 
   try {
-    const role = req.user?.role || 'guest';
-    let limit;
-
-    switch (role) {
-      case 'admin':
-        limit = 20;
-
-        break;
-      case 'user':
-        limit = 10;
-
-        break;
-      case 'guest':
-        limit = 5;
-
-        break;
-      default:
-        break;
-    }
+    const role = getRequestRole(req);
+    const rateLimitsByRole = {
+      admin: 20,
+      user: 10,
+      guest: 5,
+    };
+    const limit = rateLimitsByRole[role] || rateLimitsByRole.guest;
 
     const client = aj.withRule(
       slidingWindow({
