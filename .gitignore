@@ -2,6 +2,9 @@ node_modules
 .env
 .env.*
 .neon_local/
+.idea/
+.cache/
+*.swp
 public/readme/module-icon.webp
 public/readme/module-thumbnail.webp
 

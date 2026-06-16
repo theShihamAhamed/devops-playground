@@ -10,9 +10,9 @@ import { authenticateToken, requireRole } from '#middleware/auth.middleware.js';
 const router = express.Router();
 
 // GET /users - Get all users (admin only)
-router.get('/', authenticateToken, fetchAllUsers);
+router.get('/', authenticateToken, requireRole(['admin']), fetchAllUsers);
 
-// GET /users/:id - Get user by ID (authenticated users only)
+// GET /users/:id - Get own user profile, or any profile as admin
 router.get('/:id', authenticateToken, fetchUserById);
 
 // PUT /users/:id - Update user by ID (authenticated users can update own profile, admin can update any)

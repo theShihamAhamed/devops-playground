@@ -32,6 +32,9 @@ services:
       - '${PORT:-3000}:3000'
     env_file:
       - .env.development
+    environment:
+      USE_NEON_LOCAL: 'true'
+      NEON_LOCAL_HOST: neon-local
     volumes:
       # Mount source code for development hot-reload
       - .:/app

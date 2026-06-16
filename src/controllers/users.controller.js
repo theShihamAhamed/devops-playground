@@ -1,115 +1,142 @@
 import logger from '#config/logger.js';
-import { db } from '#config/database.js';
-import { users } from '#models/user.model.js';
-import { eq } from 'drizzle-orm';
+import {
+  deleteUser,
+  getAllUsers,
+  getUserById,
+  updateUser,
+} from '#services/users.service.js';
+import { formatValidationErrors } from '#utils/format.js';
+import z from 'zod';
 
-export const fetchAllUsers = async () => {
+const userUpdateSchema = z
+  .object({
+    name: z.string().min(2).max(255).trim().optional(),
+    email: z.email().max(255).toLowerCase().trim().optional(),
+    role: z.enum(['user', 'admin']).optional(),
+  })
+  .strict()
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  });
+
+const parseUserId = rawId => {
+  const id = Number.parseInt(rawId, 10);
+  return Number.isInteger(id) && id > 0 ? id : null;
+};
+
+const isAdmin = user => user?.role === 'admin';
+const ownsProfile = (user, id) => Number(user?.id) === id;
+
+export const fetchAllUsers = async (_req, res, next) => {
   try {
-    return await db
-      .select({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        role: users.role,
-        created_at: users.created_at,
-        updated_at: users.updated_at,
-      })
-      .from(users);
+    const allUsers = await getAllUsers();
+    res.status(200).json({ users: allUsers });
   } catch (e) {
-    logger.error('Error getting users', e);
-    throw e;
+    logger.error('Fetch all users controller error:', e);
+    next(e);
   }
 };
 
-export const fetchUserById = async id => {
+export const fetchUserById = async (req, res, next) => {
   try {
-    const [user] = await db
-      .select({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        role: users.role,
-        created_at: users.created_at,
-        updated_at: users.updated_at,
-      })
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
-
-    if (!user) {
-      throw new Error('User not found');
+    const id = parseUserId(req.params.id);
+    if (!id) {
+      return res.status(400).json({ error: 'Invalid user id' });
     }
 
-    return user;
-  } catch (e) {
-    logger.error(`Error getting user by id ${id}:`, e);
-    throw e;
-  }
-};
-
-export const updateUserById = async (id, updates) => {
-  try {
-    // First check if user exists
-    const existingUser = await fetchUserById(id);
-
-    // Check if email is being updated and if it already exists
-    if (updates.email && updates.email !== existingUser.email) {
-      const [emailExists] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, updates.email))
-        .limit(1);
-      if (emailExists) {
-        throw new Error('Email already exists');
-      }
+    if (!isAdmin(req.user) && !ownsProfile(req.user, id)) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'You can only view your own profile',
+      });
     }
 
-    // Add updated_at timestamp
-    const updateData = {
-      ...updates,
-      updated_at: new Date(),
-    };
-
-    const [updatedUser] = await db
-      .update(users)
-      .set(updateData)
-      .where(eq(users.id, id))
-      .returning({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        role: users.role,
-        created_at: users.created_at,
-        updated_at: users.updated_at,
-      });
-
-    logger.info(`User ${updatedUser.email} updated successfully`);
-    return updatedUser;
+    const user = await getUserById(id);
+    res.status(200).json({ user });
   } catch (e) {
-    logger.error(`Error updating user ${id}:`, e);
-    throw e;
+    logger.error('Fetch user by id controller error:', e);
+
+    if (e.message === 'User not found') {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    next(e);
   }
 };
 
-export const deleteUserById = async id => {
+export const updateUserById = async (req, res, next) => {
   try {
-    // First check if user exists
-    await fetchUserById(id);
+    const id = parseUserId(req.params.id);
+    if (!id) {
+      return res.status(400).json({ error: 'Invalid user id' });
+    }
 
-    const [deletedUser] = await db
-      .delete(users)
-      .where(eq(users.id, id))
-      .returning({
-        id: users.id,
-        email: users.email,
-        name: users.name,
-        role: users.role,
+    if (!isAdmin(req.user) && !ownsProfile(req.user, id)) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'You can only update your own profile',
       });
+    }
 
-    logger.info(`User ${deletedUser.email} deleted successfully`);
-    return deletedUser;
+    const validationResult = userUpdateSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: formatValidationErrors(validationResult.error),
+      });
+    }
+
+    const updates = { ...validationResult.data };
+    if (!isAdmin(req.user)) {
+      delete updates.role;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: 'At least one permitted field must be provided',
+      });
+    }
+
+    const updatedUser = await updateUser(id, updates);
+    res.status(200).json({
+      message: 'User updated successfully',
+      user: updatedUser,
+    });
   } catch (e) {
-    logger.error(`Error deleting user ${id}:`, e);
-    throw e;
+    logger.error('Update user by id controller error:', e);
+
+    if (e.message === 'User not found') {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (e.message === 'Email already exists') {
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+
+    next(e);
+  }
+};
+
+export const deleteUserById = async (req, res, next) => {
+  try {
+    const id = parseUserId(req.params.id);
+    if (!id) {
+      return res.status(400).json({ error: 'Invalid user id' });
+    }
+
+    const deletedUser = await deleteUser(id);
+    res.status(200).json({
+      message: 'User deleted successfully',
+      user: deletedUser,
+    });
+  } catch (e) {
+    logger.error('Delete user by id controller error:', e);
+
+    if (e.message === 'User not found') {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    next(e);
   }
 };

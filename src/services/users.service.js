@@ -49,10 +49,8 @@ export const getUserById = async id => {
 
 export const updateUser = async (id, updates) => {
   try {
-    // First check if user exists
     const existingUser = await getUserById(id);
 
-    // Check if email is being updated and if it already exists
     if (updates.email && updates.email !== existingUser.email) {
       const [emailExists] = await db
         .select()
@@ -64,7 +62,6 @@ export const updateUser = async (id, updates) => {
       }
     }
 
-    // Add updated_at timestamp
     const updateData = {
       ...updates,
       updated_at: new Date(),

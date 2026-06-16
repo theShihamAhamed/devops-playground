@@ -54,14 +54,14 @@ jobs:
       - name: Generate test summary
         if: always()
         run: |
-          echo "## Test Results 🧪" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.tests.outcome }}" == "success" ]; then
-            echo "✅ All tests passed successfully!" >> $GITHUB_STEP_SUMMARY
+            echo "All tests passed successfully." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### Coverage Status" >> $GITHUB_STEP_SUMMARY
             echo "Coverage reports have been uploaded as artifacts and retained for 30 days." >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ Some tests failed. Please check the logs above for details." >> $GITHUB_STEP_SUMMARY
+            echo "Some tests failed. Please check the logs above for details." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
             echo "1. Review the failing test output above" >> $GITHUB_STEP_SUMMARY

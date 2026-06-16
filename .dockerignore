@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+.neon_local
+.cache
+coverage
+logs
+node_modules
+npm-debug.log
+*.log
+*.swp
+.env
+.env.*
+README.md
+docker

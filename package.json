@@ -4,6 +4,9 @@
   "description": "",
   "type": "module",
   "main": "index.js",
+  "engines": {
+    "node": ">=20"
+  },
   "imports": {
     "#src/*": "./src/*",
     "#config/*": "./src/config/*",

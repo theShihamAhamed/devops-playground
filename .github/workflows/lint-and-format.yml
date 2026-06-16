@@ -51,4 +51,4 @@ jobs:
       - name: Success notification
         if: success()
         run: |
-          echo "::notice::All linting and formatting checks passed! ✅"
+          echo "::notice::All linting and formatting checks passed."
